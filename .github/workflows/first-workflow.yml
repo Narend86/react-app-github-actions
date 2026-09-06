@@ -7,33 +7,64 @@ on:
         - dev
         - qa
 jobs:
-   first-job:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Setup Node.js
-          uses: actions/setup-node@v4  
-          with:
-            node-version: 24
-            cache: npm
-        
-        - name: Install dependency
-          run: npm ci
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
 
-        - name: run eslint in app
-          run: npm run lint
+      - name: Install dependencies
+        run: npm ci
 
-        - name: run test cases
-          run: npm run test 
+      - name: Run ESLint
+        run: npm run lint
 
-        - name: make react build
-          run: npm run build
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: create react build artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: react-build
-            path: dist/
-            retention-days: 7
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Upload React build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: dist/
+          retention-days: 7
