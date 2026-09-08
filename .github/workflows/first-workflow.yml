@@ -77,7 +77,7 @@ jobs:
       - name: "Install vercel cli"
         run: npm install -g vercel
       - name: "Deploy to Vercel"
-        run: vercel deploye dist --prod --yes --token="${{secrets.VERCEL_TOKEN}}"     
+        run: vercel deploy dist --prod --yes --token="${{secrets.VERCEL_TOKEN}}"     
 
   
 
